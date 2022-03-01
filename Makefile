@@ -7,4 +7,13 @@ createdb:
 dropdb:
 	docker exec -it postgres13 dropdb transact_service
 
-.PHONY: postgres createdb dropdb
+migrateup:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/transact_service?sslmode=disable" --verbose up
+
+migrateup:
+	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/transact_service?sslmode=disable" --verbose down
+
+sqlc:
+	sqlc generate
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc
