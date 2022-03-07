@@ -7,22 +7,24 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
-)
-
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:5432/transact_service?sslmode=disable"
+	"github.com/raymond-design/transact/util"
 )
 
 var testQueries *Queries
+var testDB *sql.DB
 
 func TestMain(m *testing.M) {
-	conn, err := sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../..")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("cannot load config:", err)
 	}
 
-	testQueries = New(conn)
+	testDB, err = sql.Open(config.DBDriver, config.DBSource)
+	if err != nil {
+		log.Fatal("cannot connect to db:", err)
+	}
+
+	testQueries = New(testDB)
 
 	os.Exit(m.Run())
 }
