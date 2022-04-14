@@ -20,7 +20,7 @@ jobs:
           POSTGRES_PASSWORD: secret
           POSTGRES_DB: transact_service
         ports:
-          - 5432:5432
+          - 5434:5434
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -44,6 +44,3 @@ jobs:
         which migrate
     - name: Run migrations
       run: make migrateup
-
-    - name: Test
-      run: make test
