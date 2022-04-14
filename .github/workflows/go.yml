@@ -9,6 +9,7 @@ on:
 jobs:
 
   test:
+    name: Test
     runs-on: ubuntu-latest
 
     services:
@@ -19,21 +20,21 @@ jobs:
           POSTGRES_PASSWORD: secret
           POSTGRES_DB: transact_service
         ports:
-          - 5434:5434
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
       with:
-        go-version: 1.17
+        go-version: ^1.17
+      id: go
 
-    - name: Checkout code
+    - name: Check out code
       uses: actions/checkout@v3
 
     - name: Install golang-migrate
@@ -41,12 +42,8 @@ jobs:
         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.12.2/migrate.linux-amd64.tar.gz | tar xvz
         sudo mv migrate.linux-amd64 /usr/bin/migrate
         which migrate
-
-    - name: Db migrations
+    - name: Run migrations
       run: make migrateup
-
-    - name: Build
-      run: go build -v ./...
 
     - name: Test
       run: make test
